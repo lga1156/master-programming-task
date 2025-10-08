@@ -12,11 +12,21 @@
 
 #include <iomanip.hpp>
 
-TEST_CASE("iomanip::simple")
+TEST_CASE("iomanip::http_protocol")
 {
     std::stringstream s;
-    s << "some text" << endm;
-    CHECK(s.str() == "some text[eol]\n");
+
+    SECTION("Prepends http:// to a string literal")
+    {
+        s << http << "yandex.ru";
+        CHECK(s.str() == "http://yandex.ru");
+    }
+
+    SECTION("Works in chain with other output")
+    {
+        s << "Visit " << http << "google.com" << " today!";
+        CHECK(s.str() == "Visit http://google.com today!");
+    }
 }
 
 TEST_CASE("iomanip::one_operand")
