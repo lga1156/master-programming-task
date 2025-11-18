@@ -29,16 +29,22 @@ namespace detail
 }
 
 //{
-template<???>
-class type_map: public ???
+template<class Value, class... Types>
+class type_map: public std::array<Value, sizeof...(Types)>
 {
 public:
-    using types = ...
+    using types = std::tuple<Types...>;
 
     template<class T>
-    ?? as()
+    decltype(auto) as()
     {
-        return ...
+        return (*this)[detail::type_to_index<T, types>::v];
+    }
+
+    template<class T>
+    decltype(auto) as() const
+    {
+        return (*this)[detail::type_to_index<T, types>::v];
     }
 };
 //}
@@ -46,10 +52,16 @@ public:
 namespace std
 {
     //{
-    template<typename T, class TypeMap>
-    ?? get(??TypeMap?? tm)
+    template<typename T, class Value, class... Types>
+    decltype(auto) get(type_map<Value, Types...>& tm)
     {
-        return tm.??? as<??>();
+        return tm.template as<T>();
+    }
+
+    template<typename T, class Value, class... Types>
+    decltype(auto) get(const type_map<Value, Types...>& tm)
+    {
+        return tm.template as<T>();
     }
     //}
 }
